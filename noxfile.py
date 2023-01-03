@@ -1,3 +1,4 @@
+import os
 import nox
 
 
@@ -19,3 +20,16 @@ def lint(session):
 def black_fix(session):
     session.install("black")
     session.run("black", *PYTHON_FILES)
+
+
+@nox.session(reuse_venv=True)
+def test(session):
+    session.install("pelican")
+    session.install("-e", ".")
+    with session.chdir("./test/pelican-site/"):
+        session.run(
+            "pelican", "./content/", "-o", "./output/", "-s", "./pelicanconf.py"
+        )
+    with session.chdir("./test/pelican-site/output"):
+        assert os.path.isfile("article-1.html")
+        assert os.path.isfile("article-1.gmi")

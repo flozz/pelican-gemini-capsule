@@ -10,5 +10,8 @@ __pycache__/
 *#
 .nox
 
+# Generated content
+test/pelican-site/output
+
 # Misc
 __env__
