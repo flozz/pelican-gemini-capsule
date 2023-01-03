@@ -25,7 +25,7 @@ TODO
 Usage
 -----
 
-Once Pelian Gemini Capsule installed, simply add it to you Pelican configuration:
+Once Pelican Gemini Capsule installed, simply add it to you Pelican configuration:
 
 .. code-block:: python
 
