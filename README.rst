@@ -25,7 +25,13 @@ TODO
 Usage
 -----
 
-TODO
+Once Pelian Gemini Capsule installed, simply add it to you Pelican configuration:
+
+.. code-block:: python
+
+    PLUGINS = [
+        "pelican_gemini_capsule",
+    ]
 
 
 Contributing
