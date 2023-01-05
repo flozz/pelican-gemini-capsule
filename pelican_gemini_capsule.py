@@ -7,13 +7,10 @@ import rst2gemtext
 
 
 TEMPLATE_ARTICLE = """\
-=> {{ SITEURL }} {{ SITENAME }}
-
---------------------------------------------------------------------------------
+=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 {{ SITENAME }}
 
 # {{ article.title }}
-
-{{ article.date }}
+{{ article.date.strftime("%Y-%m-%d") }}
 
 {{ article.content_gemtext }}
 """
