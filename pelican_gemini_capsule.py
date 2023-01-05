@@ -6,6 +6,9 @@ import pelican
 import rst2gemtext
 
 
+GEMINI_NUMBER_ARTICLES_ON_HOME = 10
+
+
 TEMPLATE_ARTICLE = """\
 => {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 {{ SITENAME }}
 
@@ -13,6 +16,27 @@ TEMPLATE_ARTICLE = """\
 {{ article.date.strftime("%Y-%m-%d") }}
 
 {{ article.content_gemtext }}
+"""
+
+TEMPLATE_HOME = """\
+# {{ SITENAME }}
+
+Latest Articles:
+{% for i in range(GEMINI_NUMBER_ARTICLES_ON_HOME) %}{% set article = articles[i] %}
+=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+{% endfor %}
+{% if articles | length > GEMINI_NUMBER_ARTICLES_ON_HOME %}
+=> {{ SITEURL }}all_articles.gmi ➕ All Articles
+{% endif %}
+"""
+
+TEMPLATE_ALL_ARTICLES = """\
+=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 {{ SITENAME }}
+
+# All Articles — {{ SITENAME }}
+{% for article in articles %}
+=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+{% endfor %}
 """
 
 
@@ -48,12 +72,47 @@ def generate_article(generator, article, save_as):
         gmi_file.write(rendered_article)
 
 
+def generate_home_page(generator):
+    save_as = Path(generator.output_path) / "index.gmi"
+
+    # Render thepage (templating)
+    template = jinja2.Template(TEMPLATE_HOME)
+    rendered_page = template.render(
+        generator.context,
+        GEMINI_NUMBER_ARTICLES_ON_HOME=min(
+            len(generator.articles), GEMINI_NUMBER_ARTICLES_ON_HOME
+        ),
+    )
+
+    # Write the output file
+    with open(save_as, "w") as gmi_file:
+        gmi_file.write(rendered_page)
+
+
+def generate_all_articles_page(generator):
+    save_as = Path(generator.output_path) / "all_articles.gmi"
+
+    # Render the page (templating)
+    template = jinja2.Template(TEMPLATE_ALL_ARTICLES)
+    rendered_page = template.render(generator.context)
+
+    # Write the output file
+    with open(save_as, "w") as gmi_file:
+        gmi_file.write(rendered_page)
+
+
 def article_generator_write_article(generator, content=None):
     save_as = Path(generator.output_path) / Path(content.save_as).with_suffix(".gmi")
     generate_article(generator, content, save_as)
+
+
+def article_writer_finalized(generator, writer=None):
+    generate_home_page(generator)
+    generate_all_articles_page(generator)
 
 
 def register():
     pelican.signals.article_generator_write_article.connect(
         article_generator_write_article
     )
+    pelican.signals.article_writer_finalized.connect(article_writer_finalized)
