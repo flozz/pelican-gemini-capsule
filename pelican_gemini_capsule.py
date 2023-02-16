@@ -42,24 +42,39 @@ TEMPLATE_ALL_ARTICLES = """\
 """
 
 
+class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
+    def _remove_first_title(self):
+        for i in range(len(self.visitor.nodes)):
+            node = self.visitor.nodes[i]
+            if type(node) is rst2gemtext.TitleNode and node.level == 1:
+                self.visitor.nodes.pop(i)
+                break
+
+    def _remove_attach_tag_from_links(self):
+        def _loop_on_nodes(nodes):
+            for node in nodes:
+                if isinstance(node, rst2gemtext.NodeGroup):
+                    _loop_on_nodes(node.nodes)
+                elif isinstance(node, rst2gemtext.LinkNode):
+                    if node.uri.startswith("{attach}"):
+                        node.uri = node.uri[8:]
+                    if node.rawtext.startswith("{attach}"):
+                        node.rawtext = node.uri[8:]
+
+        _loop_on_nodes(self.visitor.nodes)
+
+    def _before_translate_output_generation_hook(self):
+        self._remove_first_title()
+        self._remove_attach_tag_from_links()
+
+
 def generate_article(generator, article, save_as):
     # Read and parse the reStructuredText file
     with open(article.source_path, "r") as rst_file:
         document = rst2gemtext.parse_rst(rst_file.read())
 
-    # Remove first title from the document as it will be added back later using
-    # the template
-    node = document
-    while True:
-        node = node.next_node()
-        if not node:
-            break
-        if node.tagname == "title":
-            node.parent.remove(node)
-            break
-
     # Convert the reStructuredText into Gemtext
-    writer = rst2gemtext.GemtextWriter()
+    writer = PelicanGemtextWriter()
     gmi_io = StringIO()
     writer.write(document, gmi_io)
     gmi_io.seek(0)
@@ -77,7 +92,7 @@ def generate_article(generator, article, save_as):
 def generate_home_page(generator):
     save_as = Path(generator.output_path) / "index.gmi"
 
-    # Render thepage (templating)
+    # Render the page (templating)
     template = jinja2.Template(TEMPLATE_HOME)
     rendered_page = template.render(
         generator.context,
