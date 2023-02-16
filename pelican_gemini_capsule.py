@@ -10,18 +10,19 @@ GEMINI_NUMBER_ARTICLES_ON_HOME = 10
 
 
 TEMPLATE_ARTICLE = """\
-=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 {{ SITENAME }}
-
 # {{ article.title }}
 {{ article.date.strftime("%Y-%m-%d") }}
 
 {{ article.content_gemtext }}
+
+--------------------------------------------------------------------------------
+=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
 """
 
 TEMPLATE_HOME = """\
 # {{ SITENAME }}
 
-Latest Articles:
+## Latest Articles
 {% for i in range(GEMINI_NUMBER_ARTICLES_ON_HOME) %}{% set article = articles[i] %}
 => {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
 {% endfor %}
@@ -31,12 +32,13 @@ Latest Articles:
 """
 
 TEMPLATE_ALL_ARTICLES = """\
-=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 {{ SITENAME }}
-
 # All Articles — {{ SITENAME }}
 {% for article in articles %}
 => {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
 {% endfor %}
+
+--------------------------------------------------------------------------------
+=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
 """
 
 
