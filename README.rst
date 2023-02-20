@@ -19,7 +19,9 @@ Requirements
 Installation
 ------------
 
-TODO
+::
+
+    pip install pelican-gemini-capsule
 
 
 Usage
@@ -142,7 +144,17 @@ Want to support this project?
 Changelog
 ---------
 
-TODO
+* **[NEXT]** (changes on ``master``, but not released yet):
+
+  * Nothing yet ;)
+
+* **v0.1.0:**
+
+  * Initial release.
+  * Generates home page
+  * Generates articles index page
+  * Generates articles
+  * Configurable templates
 
 
 .. _rst2gemtext: https://github.com/flozz/rst2gemtext

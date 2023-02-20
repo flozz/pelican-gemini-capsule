@@ -13,7 +13,7 @@ if os.path.isfile("README.rst"):
 
 setup(
     name="pelican-gemini-capsule",
-    version="0.0.0",
+    version="0.1.0",
     description="Pelican plugin to generate Gemini capsules",
     url="https://github.com/flozz/pelican-gemini-capsule",
     project_urls={
