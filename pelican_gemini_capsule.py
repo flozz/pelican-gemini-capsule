@@ -13,7 +13,7 @@ TEMPLATE_HOME = """\
 
 ## Latest Articles
 {% for i in range(articles_count_on_home) %}{% set article = articles[i] %}
-=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+=> {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
 {% endfor %}
 {% if articles | length > articles_count_on_home %}
 => {{ GEMSITEURL }}/all_articles.gmi ➕ All Articles
@@ -23,7 +23,7 @@ TEMPLATE_HOME = """\
 TEMPLATE_ARTICLES_INDEX_PAGE = """\
 # All Articles — {{ SITENAME }}
 {% for article in articles %}
-=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+=> {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
 {% endfor %}
 
 --------------------------------------------------------------------------------
