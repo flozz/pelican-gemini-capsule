@@ -50,10 +50,10 @@ You can configure this plugin by adding the following variables to your ``pelica
 
     ## Latest Articles
     {% for i in range(articles_count_on_home) %}{% set article = articles[i] %}
-    => {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+    => {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
     {% endfor %}
-    {% if articles | length > GEMINI_DISPLAYED_ARTICLE_COUNT_ON_HOME %}
-    => {{ SITEURL }}all_articles.gmi ➕ All Articles
+    {% if articles | length > articles_count_on_home %}
+    => {{ GEMSITEURL }}/all_articles.gmi ➕ All Articles
     {% endif %}
     """
 
@@ -61,11 +61,11 @@ You can configure this plugin by adding the following variables to your ``pelica
     GEMINI_TEMPLATE_ARTICLES_INDEX_PAGE = """\
     # All Articles — {{ SITENAME }}
     {% for article in articles %}
-    => {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+    => {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
     {% endfor %}
 
     --------------------------------------------------------------------------------
-    => {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
+    => {{ GEMSITEURL }}/ 🏠 Home
     """
 
     # Template of articles
@@ -76,7 +76,7 @@ You can configure this plugin by adding the following variables to your ``pelica
     {{ article.content_gemtext }}
 
     --------------------------------------------------------------------------------
-    => {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
+    => {{ GEMSITEURL }}/ 🏠 Home
     """
 
 

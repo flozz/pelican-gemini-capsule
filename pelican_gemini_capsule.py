@@ -16,7 +16,7 @@ TEMPLATE_HOME = """\
 => {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
 {% endfor %}
 {% if articles | length > articles_count_on_home %}
-=> {{ SITEURL }}all_articles.gmi ➕ All Articles
+=> {{ GEMSITEURL }}/all_articles.gmi ➕ All Articles
 {% endif %}
 """
 
@@ -27,7 +27,7 @@ TEMPLATE_ARTICLES_INDEX_PAGE = """\
 {% endfor %}
 
 --------------------------------------------------------------------------------
-=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
+=> {{ GEMSITEURL }}/ 🏠 Home
 """
 
 TEMPLATE_ARTICLE = """\
@@ -37,7 +37,7 @@ TEMPLATE_ARTICLE = """\
 {{ article.content_gemtext }}
 
 --------------------------------------------------------------------------------
-=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
+=> {{ GEMSITEURL }}/ 🏠 Home
 """
 
 
@@ -83,7 +83,13 @@ def generate_article(generator, article, save_as):
     # Render the final Gemtext file (templating)
     article.content_gemtext = gmi_io.read()
     template = jinja2.Template(template_text)
-    rendered_article = template.render(generator.context, article=article)
+    rendered_article = template.render(
+        generator.context,
+        article=article,
+        GEMSITEURL=generator.settings.get("SITEURL", "")
+        .replace("http://", "gemini://")
+        .replace("https://", "gemini://"),
+    )
 
     # Write the output file
     with open(save_as, "w") as gmi_file:
@@ -102,6 +108,9 @@ def generate_home_page(generator):
     rendered_page = template.render(
         generator.context,
         articles_count_on_home=min(len(generator.articles), articles_count_on_home),
+        GEMSITEURL=generator.settings.get("SITEURL", "")
+        .replace("http://", "gemini://")
+        .replace("https://", "gemini://"),
     )
 
     # Write the output file
@@ -117,7 +126,12 @@ def generate_all_articles_page(generator):
 
     # Render the page (templating)
     template = jinja2.Template(template_text)
-    rendered_page = template.render(generator.context)
+    rendered_page = template.render(
+        generator.context,
+        GEMSITEURL=generator.settings.get("SITEURL", "")
+        .replace("http://", "gemini://")
+        .replace("https://", "gemini://"),
+    )
 
     # Write the output file
     with open(save_as, "w") as gmi_file:
