@@ -1,4 +1,9 @@
+import os
+import sys
 import glob
+
+sys.path.append(os.curdir)
+from pelicangeminiconf import *
 
 AUTHOR = "Fabien LOISON"
 SITENAME = "Pelican Test Site"

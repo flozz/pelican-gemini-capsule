@@ -6,36 +6,35 @@ import pelican
 import rst2gemtext
 
 
-GEMINI_NUMBER_ARTICLES_ON_HOME = 10
+DISPLAYED_ARTICLE_COUNT_ON_HOME = 10
 
+TEMPLATE_HOME = """\
+# {{ SITENAME }}
+
+## Latest Articles
+{% for i in range(articles_count_on_home) %}{% set article = articles[i] %}
+=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+{% endfor %}
+{% if articles | length > articles_count_on_home %}
+=> {{ SITEURL }}all_articles.gmi ➕ All Articles
+{% endif %}
+"""
+
+TEMPLATE_ARTICLES_INDEX_PAGE = """\
+# All Articles — {{ SITENAME }}
+{% for article in articles %}
+=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+{% endfor %}
+
+--------------------------------------------------------------------------------
+=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
+"""
 
 TEMPLATE_ARTICLE = """\
 # {{ article.title }}
 {{ article.date.strftime("%Y-%m-%d") }}
 
 {{ article.content_gemtext }}
-
---------------------------------------------------------------------------------
-=> {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
-"""
-
-TEMPLATE_HOME = """\
-# {{ SITENAME }}
-
-## Latest Articles
-{% for i in range(GEMINI_NUMBER_ARTICLES_ON_HOME) %}{% set article = articles[i] %}
-=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
-{% endfor %}
-{% if articles | length > GEMINI_NUMBER_ARTICLES_ON_HOME %}
-=> {{ SITEURL }}all_articles.gmi ➕ All Articles
-{% endif %}
-"""
-
-TEMPLATE_ALL_ARTICLES = """\
-# All Articles — {{ SITENAME }}
-{% for article in articles %}
-=> {{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
-{% endfor %}
 
 --------------------------------------------------------------------------------
 => {% if SITEURL %}{{ SITEURL }}{% else %}/{% endif %} 🏠 Home
@@ -69,6 +68,8 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
 
 
 def generate_article(generator, article, save_as):
+    template_text = generator.settings.get("GEMINI_TEMPLATE_ARTICLE", TEMPLATE_ARTICLE)
+
     # Read and parse the reStructuredText file
     with open(article.source_path, "r") as rst_file:
         document = rst2gemtext.parse_rst(rst_file.read())
@@ -81,7 +82,7 @@ def generate_article(generator, article, save_as):
 
     # Render the final Gemtext file (templating)
     article.content_gemtext = gmi_io.read()
-    template = jinja2.Template(TEMPLATE_ARTICLE)
+    template = jinja2.Template(template_text)
     rendered_article = template.render(generator.context, article=article)
 
     # Write the output file
@@ -91,14 +92,16 @@ def generate_article(generator, article, save_as):
 
 def generate_home_page(generator):
     save_as = Path(generator.output_path) / "index.gmi"
+    template_text = generator.settings.get("GEMINI_TEMPLATE_HOME", TEMPLATE_HOME)
+    articles_count_on_home = generator.settings.get(
+        "GEMINI_DISPLAYED_ARTICLE_COUNT_ON_HOME", DISPLAYED_ARTICLE_COUNT_ON_HOME
+    )
 
     # Render the page (templating)
-    template = jinja2.Template(TEMPLATE_HOME)
+    template = jinja2.Template(template_text)
     rendered_page = template.render(
         generator.context,
-        GEMINI_NUMBER_ARTICLES_ON_HOME=min(
-            len(generator.articles), GEMINI_NUMBER_ARTICLES_ON_HOME
-        ),
+        articles_count_on_home=min(len(generator.articles), articles_count_on_home),
     )
 
     # Write the output file
@@ -108,9 +111,12 @@ def generate_home_page(generator):
 
 def generate_all_articles_page(generator):
     save_as = Path(generator.output_path) / "all_articles.gmi"
+    template_text = generator.settings.get(
+        "GEMINI_TEMPLATE_ARTICLES_INDEX_PAGE", TEMPLATE_ARTICLES_INDEX_PAGE
+    )
 
     # Render the page (templating)
-    template = jinja2.Template(TEMPLATE_ALL_ARTICLES)
+    template = jinja2.Template(template_text)
     rendered_page = template.render(generator.context)
 
     # Write the output file
