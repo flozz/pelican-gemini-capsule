@@ -52,7 +52,7 @@ You can configure this plugin by adding the following variables to your ``pelica
 
     ## Latest Articles
     {% for i in range(articles_count_on_home) %}{% set article = articles[i] %}
-    => {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+    => {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.raw_title -}}
     {% endfor %}
     {% if articles | length > articles_count_on_home %}
     => {{ GEMSITEURL }}/all_articles.gmi ➕ All Articles
@@ -63,7 +63,7 @@ You can configure this plugin by adding the following variables to your ``pelica
     GEMINI_TEMPLATE_ARTICLES_INDEX_PAGE = """\
     # All Articles — {{ SITENAME }}
     {% for article in articles %}
-    => {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+    => {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.raw_title -}}
     {% endfor %}
 
     --------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ You can configure this plugin by adding the following variables to your ``pelica
 
     # Template of articles
     GEMINI_TEMPLATE_ARTICLE = """\
-    # {{ article.title }}
+    # {{ article.raw_title }}
     {{ article.date.strftime("%Y-%m-%d") }}
 
     {{ article.content_gemtext }}
@@ -146,7 +146,10 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
-  * Nothing yet ;)
+  * Pass the articles source file name to docutils to allow the ``include``
+    directive to work (@flozz)
+  * Added a ``raw_title`` attibute on article with decoded HTML entities
+    (@flozz)
 
 * **v0.1.0:**
 

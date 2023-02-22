@@ -1,3 +1,4 @@
+import html
 from pathlib import Path
 from io import StringIO
 
@@ -13,7 +14,7 @@ TEMPLATE_HOME = """\
 
 ## Latest Articles
 {% for i in range(articles_count_on_home) %}{% set article = articles[i] %}
-=> {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+=> {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.raw_title -}}
 {% endfor %}
 {% if articles | length > articles_count_on_home %}
 => {{ GEMSITEURL }}/all_articles.gmi ➕ All Articles
@@ -23,7 +24,7 @@ TEMPLATE_HOME = """\
 TEMPLATE_ARTICLES_INDEX_PAGE = """\
 # All Articles — {{ SITENAME }}
 {% for article in articles %}
-=> {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.title -}}
+=> {{ GEMSITEURL }}/{{ article.url | replace(".html", ".gmi") }} {{ article.date.strftime("%Y-%m-%d") }} {{ article.raw_title -}}
 {% endfor %}
 
 --------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ TEMPLATE_ARTICLES_INDEX_PAGE = """\
 """
 
 TEMPLATE_ARTICLE = """\
-# {{ article.title }}
+# {{ article.raw_title }}
 {{ article.date.strftime("%Y-%m-%d") }}
 
 {{ article.content_gemtext }}
@@ -73,6 +74,9 @@ def generate_article(generator, article, save_as):
     # Read and parse the reStructuredText file
     with open(article.source_path, "r") as rst_file:
         document = rst2gemtext.parse_rst(rst_file.read(), rst_file.name)
+
+    # Avoid HTML entities in titles
+    article.raw_title = html.unescape(article.title)
 
     # Convert the reStructuredText into Gemtext
     writer = PelicanGemtextWriter()
