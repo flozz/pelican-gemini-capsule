@@ -72,7 +72,7 @@ def generate_article(generator, article, save_as):
 
     # Read and parse the reStructuredText file
     with open(article.source_path, "r") as rst_file:
-        document = rst2gemtext.parse_rst(rst_file.read())
+        document = rst2gemtext.parse_rst(rst_file.read(), rst_file.name)
 
     # Convert the reStructuredText into Gemtext
     writer = PelicanGemtextWriter()
