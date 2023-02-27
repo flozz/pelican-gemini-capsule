@@ -96,6 +96,7 @@ def generate_article(generator, article, save_as):
     )
 
     # Write the output file
+    save_as.parent.mkdir(parents=True, exist_ok=True)
     with open(save_as, "w") as gmi_file:
         gmi_file.write(rendered_article)
 
