@@ -150,6 +150,8 @@ Changelog
     directive to work (@flozz)
   * Added a ``raw_title`` attibute on article with decoded HTML entities
     (@flozz)
+  * Create the output folder before trying to write articles (@flozz)
+  * Avoid having the same image linked twice in articles (@flozz)
 
 * **v0.1.0:**
 
