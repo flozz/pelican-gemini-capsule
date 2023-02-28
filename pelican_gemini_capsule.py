@@ -73,12 +73,9 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
                 continue
             if not isinstance(node.nodes[1], rst2gemtext.LinkNode):
                 continue
-            # fmt: off
-            if (
-                    node.nodes[0].uri.endswith(node.nodes[1].uri)
-                    or node.nodes[1].uri.endswith(node.nodes[0].uri)
-               ):
-            # fmt: on
+            if node.nodes[0].uri.endswith(node.nodes[1].uri) or node.nodes[
+                1
+            ].uri.endswith(node.nodes[0].uri):
                 if node.nodes[0].uri == node.nodes[0].rawtext:
                     node.nodes.pop(0)
                 elif node.nodes[1].uri == node.nodes[1].rawtext:
