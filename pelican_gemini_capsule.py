@@ -64,22 +64,30 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
         _loop_on_nodes(self.visitor.nodes)
 
     def _clean_figure_links(self):
-        for node in self.visitor.nodes:
-            if not isinstance(node, rst2gemtext.FigureNode):
-                continue
-            if len(node.nodes) < 2:
-                continue
-            if not isinstance(node.nodes[0], rst2gemtext.LinkNode):
-                continue
-            if not isinstance(node.nodes[1], rst2gemtext.LinkNode):
-                continue
-            if node.nodes[0].uri.endswith(node.nodes[1].uri) or node.nodes[
-                1
-            ].uri.endswith(node.nodes[0].uri):
-                if node.nodes[0].uri == node.nodes[0].rawtext:
-                    node.nodes.pop(0)
-                elif node.nodes[1].uri == node.nodes[1].rawtext:
-                    node.nodes.pop(1)
+        def _clean(parent):
+            for node in parent.nodes:
+                if isinstance(node, rst2gemtext.NodeGroup) and not isinstance(
+                    node, rst2gemtext.FigureNode
+                ):
+                    _clean(node)
+                    continue
+                if not isinstance(node, rst2gemtext.FigureNode):
+                    continue
+                if len(node.nodes) < 2:
+                    continue
+                if not isinstance(node.nodes[0], rst2gemtext.LinkNode):
+                    continue
+                if not isinstance(node.nodes[1], rst2gemtext.LinkNode):
+                    continue
+                if node.nodes[0].uri.endswith(node.nodes[1].uri) or node.nodes[
+                    1
+                ].uri.endswith(node.nodes[0].uri):
+                    if node.nodes[0].uri == node.nodes[0].rawtext:
+                        node.nodes.pop(0)
+                    elif node.nodes[1].uri == node.nodes[1].rawtext:
+                        node.nodes.pop(1)
+
+        _clean(self.visitor)
 
     def _before_translate_output_generation_hook(self):
         self._remove_first_title()
