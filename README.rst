@@ -146,6 +146,10 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
+  * Nothing yet :)
+
+* **v0.2.0:**
+
   * Pass the articles source file name to docutils to allow the ``include``
     directive to work (@flozz)
   * Added a ``raw_title`` attibute on article with decoded HTML entities
