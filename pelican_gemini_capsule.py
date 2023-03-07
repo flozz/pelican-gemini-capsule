@@ -43,6 +43,11 @@ TEMPLATE_ARTICLE = """\
 
 
 class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
+    def __init__(self, generator, article):
+        rst2gemtext.GemtextWriter.__init__(self)
+        self._generator = generator  # Pelican generator
+        self._article = article  # Pelican article
+
     def _remove_first_title(self):
         for i in range(len(self.visitor.nodes)):
             node = self.visitor.nodes[i]
@@ -64,12 +69,12 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
         _loop_on_nodes(self.visitor.nodes)
 
     def _clean_figure_links(self):
-        def _clean(parent):
-            for node in parent.nodes:
+        def _loop_on_nodes(nodes):
+            for node in nodes:
                 if isinstance(node, rst2gemtext.NodeGroup) and not isinstance(
                     node, rst2gemtext.FigureNode
                 ):
-                    _clean(node)
+                    _loop_on_nodes(node.nodes)
                     continue
                 if not isinstance(node, rst2gemtext.FigureNode):
                     continue
@@ -87,12 +92,37 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
                     elif node.nodes[1].uri == node.nodes[1].rawtext:
                         node.nodes.pop(1)
 
-        _clean(self.visitor)
+        _loop_on_nodes(self.visitor.nodes)
+
+    def _resolve_internal_links(self):
+        def _loop_on_nodes(nodes):
+            for node in nodes:
+                if isinstance(node, rst2gemtext.NodeGroup):
+                    _loop_on_nodes(node.nodes)
+                    continue
+                if not isinstance(node, rst2gemtext.LinkNode):
+                    continue
+                if not node.uri.startswith("{filename}"):
+                    continue
+                article_path = Path(self._article.source_path)
+                target_path = (article_path.parent / node.uri[10:]).resolve()
+                for article in self._generator.articles:
+                    if target_path.as_posix() == article.source_path:
+                        target_uri = Path("/%s" % article.url)
+                        if target_uri.as_posix().endswith(
+                            ".html"
+                        ) or target_uri.as_posix().endswith(".htm"):
+                            target_uri = target_uri.with_suffix(".gmi")
+                        node.uri = target_uri.as_posix()
+                        break
+
+        _loop_on_nodes(self.visitor.nodes)
 
     def _before_translate_output_generation_hook(self):
         self._remove_first_title()
         self._remove_attach_tag_from_links()
         self._clean_figure_links()
+        self._resolve_internal_links()
 
 
 def generate_article(generator, article, save_as):
@@ -106,7 +136,7 @@ def generate_article(generator, article, save_as):
     article.raw_title = html.unescape(article.title)
 
     # Convert the reStructuredText into Gemtext
-    writer = PelicanGemtextWriter()
+    writer = PelicanGemtextWriter(generator, article)
     gmi_io = StringIO()
     writer.write(document, gmi_io)
     gmi_io.seek(0)
