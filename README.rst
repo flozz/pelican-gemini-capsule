@@ -146,6 +146,10 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
+  * Nothing yet :)
+
+* **v0.3.0:**
+
   * Resolve internal links (``{filename}../foo/bar.rst``) (@flozz)
 
 * **v0.2.0:**
