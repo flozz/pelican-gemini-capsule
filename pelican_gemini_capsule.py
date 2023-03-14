@@ -5,7 +5,7 @@ from io import StringIO
 import jinja2
 import pelican
 import rst2gemtext
-
+import docutils.parsers.rst.directives
 
 DISPLAYED_ARTICLE_COUNT_ON_HOME = 10
 
@@ -128,6 +128,12 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
 def generate_article(generator, article, save_as):
     template_text = generator.settings.get("GEMINI_TEMPLATE_ARTICLE", TEMPLATE_ARTICLE)
 
+    # XXX HACK: remove the Pelican custom "code-block" directive
+    pelican_code_block = None
+    if "code-block" in docutils.parsers.rst.directives._directives:
+        pelican_code_block = docutils.parsers.rst.directives._directives["code-block"]
+        del docutils.parsers.rst.directives._directives["code-block"]
+
     # Read and parse the reStructuredText file
     with open(article.source_path, "r") as rst_file:
         document = rst2gemtext.parse_rst(rst_file.read(), rst_file.name)
@@ -156,6 +162,11 @@ def generate_article(generator, article, save_as):
     save_as.parent.mkdir(parents=True, exist_ok=True)
     with open(save_as, "w") as gmi_file:
         gmi_file.write(rendered_article)
+
+    # XXX HACK: put-back the Pelican custom "code-block" directive
+    pelican_code_block = None
+    if pelican_code_block:
+        docutils.parsers.rst.directives._directives["code-block"] = pelican_code_block
 
 
 def generate_home_page(generator):

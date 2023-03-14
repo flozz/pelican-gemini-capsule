@@ -146,7 +146,7 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
-  * Nothing yet :)
+  * Fixed missing code blocks in outputed Gemtext (@flozz)
 
 * **v0.3.0:**
 
