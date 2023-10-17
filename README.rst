@@ -150,20 +150,20 @@ Changelog
 
 * **v0.3.1:**
 
-  * Fixed missing code blocks in outputed Gemtext (@flozz)
+  * fix: Fixed missing code blocks in outputed Gemtext (@flozz)
 
 * **v0.3.0:**
 
-  * Resolve internal links (``{filename}../foo/bar.rst``) (@flozz)
+  * feat: Resolve internal links (``{filename}../foo/bar.rst``) (@flozz)
 
 * **v0.2.0:**
 
-  * Pass the articles source file name to docutils to allow the ``include``
-    directive to work (@flozz)
-  * Added a ``raw_title`` attibute on article with decoded HTML entities
+  * feat: Pass the articles source file name to docutils to allow the
+    ``include`` directive to work (@flozz)
+  * feat: Added a ``raw_title`` attibute on article with decoded HTML entities
     (@flozz)
-  * Create the output folder before trying to write articles (@flozz)
-  * Avoid having the same image linked twice in articles (@flozz)
+  * fix: Create the output folder before trying to write articles (@flozz)
+  * fix: Avoid having the same image linked twice in articles (@flozz)
 
 * **v0.1.0:**
 
