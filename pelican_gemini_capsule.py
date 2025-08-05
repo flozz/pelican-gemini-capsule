@@ -94,6 +94,24 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
 
         _loop_on_nodes(self.visitor.nodes)
 
+    def _dedup_links(self):
+        def _loop_on_nodes(nodes):
+            prev_node = None
+            for node in nodes:
+                if isinstance(node, rst2gemtext.NodeGroup):
+                    _loop_on_nodes(node.nodes)
+                if isinstance(prev_node, rst2gemtext.LinkNode) and isinstance(
+                    node, rst2gemtext.LinkNode
+                ):
+                    if prev_node.uri == node.uri:
+                        if prev_node.uri == prev_node.rawtext:
+                            nodes.pop(nodes.index(prev_node))
+                        elif node.uri == node.rawtext:
+                            nodes.pop(nodes.index(node))
+                prev_node = node
+
+        _loop_on_nodes(self.visitor.nodes)
+
     def _resolve_internal_links(self):
         def _loop_on_nodes(nodes):
             for node in nodes:
@@ -123,6 +141,7 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
         self._remove_attach_tag_from_links()
         self._clean_figure_links()
         self._resolve_internal_links()
+        self._dedup_links()
 
 
 def generate_article(generator, article, save_as):
