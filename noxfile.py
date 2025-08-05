@@ -4,16 +4,16 @@ import nox
 
 PYTHON_FILES = [
     "pelican_gemini_capsule.py",
-    "setup.py",
     "noxfile.py",
 ]
 
 
 @nox.session(reuse_venv=True)
 def lint(session):
-    session.install("flake8", "black")
+    session.install("-e", ".[dev]")
     session.run("flake8", *PYTHON_FILES)
     session.run("black", "--check", "--diff", "--color", *PYTHON_FILES)
+    session.run("validate-pyproject", "pyproject.toml")
 
 
 @nox.session(reuse_venv=True)

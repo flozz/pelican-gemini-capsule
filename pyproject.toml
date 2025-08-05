@@ -1,2 +1,45 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "pelican-gemini-capsule"
+version = "0.3.1"
+authors = [
+    {name = "Fabien LOISON"},
+]
+description = "Pelican plugin to generate Gemini capsules"
+readme = "README.rst"
+keywords = ["pelican", "gemini", "capsule", "gemtext", "gmi"]
+license = "GPL-3.0-or-later"
+license-files = ["COPYING"]
+requires-python = ">=3.9"
+dependencies = ["rst2gemtext"]
+
+[project.optional-dependencies]
+dev = [
+    "nox",
+    "flit",
+    "black",
+    "flake8",
+    "flake8-pyproject",
+    "validate-pyproject",
+]
+
+[project.urls]
+source = "https://github.com/flozz/pelican-gemini-capsule"
+documentation = "https://github.com/flozz/pelican-gemini-capsule/blob/master/README.rst"
+changelog = "https://github.com/flozz/pelican-gemini-capsule?tab=readme-ov-file#changelog"
+issues = "https://github.com/flozz/pelican-gemini-capsule/issues"
+chat = "https://discord.gg/P77sWhuSs4"
+donate = "https://github.com/flozz/pelican-gemini-capsule#support-this-project"
+
 [tool.black]
-target-version = ['py39']
+target-version = ["py39"]
+
+[tool.flake8]
+ignore = [
+    # ↓↓ Black handles that its way... :)
+    "W503",  # line break before binary operator
+    "E501",  # line too long (> 79 characters)
+]

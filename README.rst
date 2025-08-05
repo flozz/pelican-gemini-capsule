@@ -147,6 +147,7 @@ Changelog
 * **[NEXT]** (changes on ``master``, but not released yet):
 
   * fix: Deduplicates identical links that follow each other in the document (@flozz)
+  * misc(packaging): Modernized packaging: replaced ``setup.py`` and ``setuptools``  by ``pyproject.toml`` and ``flit`` (@flozz)
   * misc: Added Python 3.12, 3.13 support (@flozz)
   * misc!: Removed Python 3.7, 3.8 support (@flozz)
 
