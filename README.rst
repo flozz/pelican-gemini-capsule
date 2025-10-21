@@ -146,6 +146,10 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
+  * Nothing yet ;)
+
+* **v0.5.0:**
+
   * fix: Fixed absolute internal links resolution (@flozz)
   * misc: Added Python 3.14 support (@flozz)
 
