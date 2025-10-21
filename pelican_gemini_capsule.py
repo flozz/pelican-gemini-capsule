@@ -42,6 +42,9 @@ TEMPLATE_ARTICLE = """\
 """
 
 
+_PELICAN_INSTANCE = None
+
+
 class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
     def __init__(self, generator, article):
         rst2gemtext.GemtextWriter.__init__(self)
@@ -123,7 +126,15 @@ class PelicanGemtextWriter(rst2gemtext.GemtextWriter):
                 if not node.uri.startswith("{filename}"):
                     continue
                 article_path = Path(self._article.source_path)
-                target_path = (article_path.parent / node.uri[10:]).resolve()
+                content_root_path = Path(_PELICAN_INSTANCE.settings["PATH"])
+
+                # Link absolute to content root
+                if node.uri.startswith("{filename}/"):
+                    target_path = (content_root_path / node.uri[11:]).resolve()
+                # Link relative to current article
+                else:
+                    target_path = (article_path.parent / node.uri[10:]).resolve()
+
                 for article in self._generator.articles:
                     if target_path.as_posix() == article.source_path:
                         target_uri = Path("/%s" % article.url)
@@ -230,6 +241,11 @@ def generate_all_articles_page(generator):
         gmi_file.write(rendered_page)
 
 
+def initialized(pelican):
+    global _PELICAN_INSTANCE
+    _PELICAN_INSTANCE = pelican
+
+
 def article_generator_write_article(generator, content=None):
     save_as = Path(generator.output_path) / Path(content.save_as).with_suffix(".gmi")
     generate_article(generator, content, save_as)
@@ -241,6 +257,7 @@ def article_writer_finalized(generator, writer=None):
 
 
 def register():
+    pelican.signals.initialized.connect(initialized)
     pelican.signals.article_generator_write_article.connect(
         article_generator_write_article
     )

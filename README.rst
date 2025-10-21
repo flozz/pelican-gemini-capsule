@@ -146,7 +146,7 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
-  * Nothing yet ;)
+  * fix: Fixed absolute internal links resolution (@flozz)
 
 * **v0.4.0:**
 
