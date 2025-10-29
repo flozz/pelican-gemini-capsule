@@ -13,7 +13,7 @@ readme = "README.rst"
 keywords = ["pelican", "gemini", "capsule", "gemtext", "gmi"]
 license = "GPL-3.0-or-later"
 license-files = ["COPYING"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = ["rst2gemtext"]
 
 [project.optional-dependencies]
@@ -35,7 +35,7 @@ chat = "https://discord.gg/P77sWhuSs4"
 donate = "https://github.com/flozz/pelican-gemini-capsule#support-this-project"
 
 [tool.black]
-target-version = ["py39"]
+target-version = ["py310"]
 
 [tool.flake8]
 ignore = [

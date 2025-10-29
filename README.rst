@@ -12,7 +12,7 @@ works with articles in reStructuredText formats.
 Requirements
 ------------
 
-* Python >= 3.9
+* Python >= 3.10
 * rst2gemtext_
 
 
@@ -146,7 +146,7 @@ Changelog
 
 * **[NEXT]** (changes on ``master``, but not released yet):
 
-  * Nothing yet ;)
+  * misc!: Removed Python 3.9 support (@flozz)
 
 * **v0.5.0:**
 
