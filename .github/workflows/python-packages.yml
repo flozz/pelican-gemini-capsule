@@ -21,7 +21,7 @@ jobs:
       - name: "Set up Python"
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: "Install Python build dependencies"
         run: |
@@ -53,6 +53,11 @@ jobs:
 
       - name: "Download artifacts"
         uses: actions/download-artifact@v6
+          path: dist/
+
+      - name: "List packages"
+        run: |
+          find . -name "*.whl" -o -name "*.tar.gz"
 
       - name: "Publish packages on PyPI"
         uses: pypa/gh-action-pypi-publish@release/v1
