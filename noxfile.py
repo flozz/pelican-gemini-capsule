@@ -1,7 +1,6 @@
 import os
 import nox
 
-
 PYTHON_FILES = [
     "pelican_gemini_capsule.py",
     "noxfile.py",
